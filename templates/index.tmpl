@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>ToDo List</title>
+  </head>
+  <body>
+    <h1>Todo一覧</h1>
+
+    <form action="/todos" method="POST">
+      <input type="text" name="title" placeholder="新しいToDo">
+      <button type="submit">追加</button>
+    </form>
+
+    <ul id="todo-list">
+      {{range .todos}}
+        <li>{{.Title}} - {{if .Done}}✅{{else}}❌{{end}}</li>
+      {{else}}
+        <li>ToDoはありません。
+      {{end}}
+    </ul>
+    <!-- <script>
+      async function fetchTodos() {
+        try {
+          const res = await fetch('/todos');
+          if (!res.ok) {
+            throw new Error('API取得失敗： ' + res.status);
+          }
+          const todos = await res.json();
+          const ul = document.getElementById('todo-list');
+          ul.innerHTML = '';
+
+          if (todos.length === 0) {
+            ul.innerHTML = '<li>登録されたToDoはありません</li>'
+            return;
+          }
+
+          todos.forEach(todo => {
+            const li = document.createElement('li');
+            li.textContent = todo.title + (todo.done ? ' ✅' : '');
+            ul.appendChild(li);
+          });
+        } catch (e) {
+          alert('Todo取得エラー： ' + e.message);
+        }
+      }
+
+      fetchTodos();
+    </script> -->
+  </body>
+</html>

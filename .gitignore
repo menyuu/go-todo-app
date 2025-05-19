@@ -1,0 +1,16 @@
+# バイナリやビルドファイル
+/tmp/
+*.exe
+*.out
+*.log
+
+# モジュールキャッシュ
+vendor/
+
+# IDE・エディタの設定
+.vscode/
+.idea/
+
+# Docker関連
+postgres-data/
+.env
