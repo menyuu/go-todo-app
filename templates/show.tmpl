@@ -1,0 +1,9 @@
+{{ define "show" }}
+  <div>
+    {{ .todo.Title }} - {{ if .todo.Done }}✅{{ else }}❌{{ end }} <a href="/edit/{{ .todo.ID }}">編集</a>
+  </div>
+  <form action="/delete/{{.todo.ID}}" method="POST" stype="display:inline">
+    <button type="submit">削除</button>
+  </form>
+  <a href="/">一覧</a>
+{{ end }}

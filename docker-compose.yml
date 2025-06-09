@@ -28,6 +28,9 @@ services:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: todo_db
+    env_file:
+      - .env
+
 
 volumes:
   postgres-data:

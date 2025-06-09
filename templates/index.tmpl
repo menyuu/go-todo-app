@@ -6,46 +6,16 @@
   </head>
   <body>
     <h1>Todo一覧</h1>
-
-    <form action="/todos" method="POST">
-      <input type="text" name="title" placeholder="新しいToDo">
-      <button type="submit">追加</button>
-    </form>
-
+    <a href="/new">新規登録</a>
     <ul id="todo-list">
-      {{range .todos}}
-        <li>{{.Title}} - {{if .Done}}✅{{else}}❌{{end}}</li>
-      {{else}}
+      {{ range .todos }}
+        <li><a href="/{{ .ID }}">{{ .Title }}</a> - {{ if .Done }}✅{{ else }}❌{{ end }} <a href="/edit/{{ .ID }}">編集</a></li>
+        <form action="/delete/{{ .ID }}" method="POST" stype="display:inline">
+          <button type="submit">削除</button>
+        </form>
+      {{ else }}
         <li>ToDoはありません。
-      {{end}}
+      {{ end }}
     </ul>
-    <!-- <script>
-      async function fetchTodos() {
-        try {
-          const res = await fetch('/todos');
-          if (!res.ok) {
-            throw new Error('API取得失敗： ' + res.status);
-          }
-          const todos = await res.json();
-          const ul = document.getElementById('todo-list');
-          ul.innerHTML = '';
-
-          if (todos.length === 0) {
-            ul.innerHTML = '<li>登録されたToDoはありません</li>'
-            return;
-          }
-
-          todos.forEach(todo => {
-            const li = document.createElement('li');
-            li.textContent = todo.title + (todo.done ? ' ✅' : '');
-            ul.appendChild(li);
-          });
-        } catch (e) {
-          alert('Todo取得エラー： ' + e.message);
-        }
-      }
-
-      fetchTodos();
-    </script> -->
   </body>
 </html>
