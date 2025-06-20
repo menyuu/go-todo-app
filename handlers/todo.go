@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"go-todo-app/models"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -11,13 +11,14 @@ import (
 
 // GET 一覧
 func Index(c *gin.Context) {
+	log.Println("Index handler called")
 	todos, err := models.GetAllTodos()
 	if err != nil {
 		c.String(http.StatusInternalServerError, "ToDoの取得に失敗しました")
 		return
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+	c.HTML(http.StatusOK, "index", gin.H{
 		"todos": todos,
 	})
 }
@@ -118,10 +119,6 @@ func Update(c *gin.Context) {
 	if len([]rune(title)) > 50 {
 		todo.Title = title
 		todo.Done = done
-
-		fmt.Println("------------------------")
-		fmt.Println(len(title))
-		fmt.Println("------------------------")
 
 		c.HTML(http.StatusOK, "edit", gin.H{
 			"todo":  todo,

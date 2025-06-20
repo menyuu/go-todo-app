@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ToDoアプリ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ToDoアプリ</h1>
+    <nav>
+      <a href="/">一覧</a>
+      <a href="/new">作成</a>
+      <a href="/logout">ログアウト</a>
+    </nav>
+  </header>
+  <main>
+    {{ template "content" . }}
+  </main>
+  <footer>
+    <hr>
+    <p>&copy; 2025 ToDoAPP</p>
+  </footer>
+</body>
+</html>
