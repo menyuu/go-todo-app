@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"go-todo-app/models"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -10,20 +9,19 @@ import (
 )
 
 // GET 一覧
-func Index(c *gin.Context) {
-	log.Println("Index handler called")
+func TodoIndex(c *gin.Context) {
 	todos, err := models.GetAllTodos()
 	if err != nil {
 		c.String(http.StatusInternalServerError, "ToDoの取得に失敗しました")
 		return
 	}
 
-	c.HTML(http.StatusOK, "index", gin.H{
+	c.HTML(http.StatusOK, "todos/index", gin.H{
 		"todos": todos,
 	})
 }
 
-func Show(c *gin.Context) {
+func TodoShow(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -37,16 +35,18 @@ func Show(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "show", gin.H{"todo": todo})
+	c.HTML(http.StatusOK, "todos/show", gin.H{
+		"todo": todo,
+	})
 }
 
 // GET 作成
-func New(c *gin.Context) {
-	c.HTML(http.StatusOK, "new", nil)
+func TodoNew(c *gin.Context) {
+	c.HTML(http.StatusOK, "todos/new", nil)
 }
 
 // GET 変更
-func Edit(c *gin.Context) {
+func TodoEdit(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -60,11 +60,11 @@ func Edit(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "edit", gin.H{"todo": todo})
+	c.HTML(http.StatusOK, "todos/edit", gin.H{"todo": todo})
 }
 
 // POST 作成
-func Create(c *gin.Context) {
+func TodoCreate(c *gin.Context) {
 	title := c.PostForm("title")
 	if title == "" {
 		c.HTML(http.StatusBadRequest, "new", gin.H{
@@ -75,7 +75,7 @@ func Create(c *gin.Context) {
 	}
 
 	if len([]rune(title)) > 50 {
-		c.HTML(http.StatusBadRequest, "new", gin.H{
+		c.HTML(http.StatusBadRequest, "todos/new", gin.H{
 			"title": title,
 			"error": "タイトルは50文字以内で入力してください",
 		})
@@ -92,7 +92,7 @@ func Create(c *gin.Context) {
 }
 
 // POST 変更
-func Update(c *gin.Context) {
+func TodoUpdate(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -109,7 +109,7 @@ func Update(c *gin.Context) {
 		todo.Title = title
 		todo.Done = done
 
-		c.HTML(http.StatusOK, "edit", gin.H{
+		c.HTML(http.StatusOK, "todos/edit", gin.H{
 			"todo":  todo,
 			"error": "タイトルは必須です",
 		})
@@ -120,7 +120,7 @@ func Update(c *gin.Context) {
 		todo.Title = title
 		todo.Done = done
 
-		c.HTML(http.StatusOK, "edit", gin.H{
+		c.HTML(http.StatusOK, "todos/edit", gin.H{
 			"todo":  todo,
 			"error": "タイトルは50文字以内で入力してください",
 		})
@@ -136,7 +136,7 @@ func Update(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/")
 }
 
-func Delete(c *gin.Context) {
+func TodoDelete(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

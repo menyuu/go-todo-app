@@ -2,12 +2,15 @@ package main
 
 import (
 	"go-todo-app/db"
-	"go-todo-app/handlers"
+	"go-todo-app/middleware"
 	"go-todo-app/models"
+	"go-todo-app/routes"
 	"path/filepath"
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +37,8 @@ func createMyRender() multitemplate.Renderer {
 		copy(partialCopy, partials)
 		files := append(layoutCopy, partialCopy...)
 		files = append(files, include)
-		name := strings.TrimSuffix(filepath.Base(include), filepath.Ext(include))
+		relPath := strings.TrimPrefix(include, "templates/")
+		name := strings.TrimSuffix(relPath, filepath.Ext(include))
 		r.AddFromFiles(name, files...)
 	}
 
@@ -46,17 +50,15 @@ func main() {
 	models.Migrate()
 
 	r := gin.Default()
+
+	store := cookie.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("todo_session", store))
+	r.Use(middleware.CurrentUser())
+
 	r.HTMLRender = createMyRender()
 	r.Static("/static", "./static")
-
 	// ルーティング
-	r.GET("/", handlers.Index)
-	r.GET("/new", handlers.New)
-	r.GET("/edit/:id", handlers.Edit)
-	r.POST("/create", handlers.Create)
-	r.GET("/:id", handlers.Show)
-	r.POST("/update/:id", handlers.Update)
-	r.POST("/delete/:id", handlers.Delete)
+	routes.SetUpRoutes(r)
 
 	r.Run(":8080")
 }

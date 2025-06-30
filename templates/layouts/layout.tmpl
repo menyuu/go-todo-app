@@ -22,9 +22,14 @@
   <header>
     <h1>ToDoアプリ</h1>
     <nav>
-      <a href="/">一覧</a>
-      <a href="/new">作成</a>
-      <a href="/logout">ログアウト</a>
+      {{ .currentUser.Name }}
+      <a href="/">ToDo一覧</a>
+      <a href="/todos/new">ToDo作成</a>
+      <a href="/users/{{ .currentUser.ID }}">マイページ</a>
+      <a href="/signup">新規作成</a>
+      <form method="POST" action="/logout">
+        <button type="submit">ログアウト</button>
+      </form>
     </nav>
   </header>
   <main>

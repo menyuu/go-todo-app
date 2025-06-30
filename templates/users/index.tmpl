@@ -1,0 +1,41 @@
+{{ define "content" }}
+  <h1>ユーザー一覧</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>名前</th>
+        <th>メールアドレス</th>
+        <th colspan="2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .users }}
+      {{ .ID }}
+        <tr>
+          <td>
+            {{ if eq $.currentUser.ID .ID }}
+              <a href="/users/{{ .ID }}">{{ .Name }}</a>
+            {{ else }}
+              {{ .Name }}
+            {{ end }}
+          </td>
+          <td>
+            {{ .Email }}
+          </td>
+          {{ if eq $.currentUser.ID .ID }}
+            <td>
+              <a href="/users/edit/{{ .ID }}">編集</a>
+            </td>
+            <td>
+              <form action="/users/delete/{{ .ID }}" method="POST">
+                <button type="submit">削除</button>
+              </form>
+            </td>
+          {{ else }}
+            <td colspan="2"></td>
+          {{ end }}
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+{{ end }}

@@ -1,0 +1,17 @@
+{{ define "content" }}
+  <h2>ログイン</h2>
+  <form method="POST" action="/login">
+    <div>
+      <label for="email">メールアドレス：</label>
+      <input id="email" type="email" name="email">
+    </div>
+    <div>
+      <label for="password">パスワード：</label>
+      <input id="password" type="password" name="password">
+    </div>
+    <div>
+      <button type="submit">ログイン</div>
+    </div>
+  </form>
+  {{ if .error }}<p style="color:red;">{{ .error }}</p>{{ end }}
+{{ end }}

@@ -1,0 +1,13 @@
+{{ define "content" }}
+  <h1>マイページ</h1>
+  <p>名前：{{ .user.Name }}</p>
+  <p>メールアドレス：{{ .user.Email }}</p>
+  <p>
+    <a href="/users/edit/{{ .user.ID }}">編集</a>
+  </p>
+  <p>
+    <form action="/users/delete/{{ .user.ID }}" method="POST">
+      <button type="submit">削除</button>
+    </form>
+  </p>
+{{ end }}
