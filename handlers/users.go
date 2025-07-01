@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-todo-app/helpers"
 	"go-todo-app/models"
 	"net/http"
 	"strconv"
@@ -18,12 +19,12 @@ func UserIndex(c *gin.Context) {
 
 	currentUser, exists := c.Get("currentUser")
 	if !exists {
-		c.HTML(http.StatusOK, "users/index", gin.H{
+		helpers.RenderHTML(c, http.StatusOK, "users/index", gin.H{
 			"users": users,
 		})
 	}
 
-	c.HTML(http.StatusOK, "users/index", gin.H{
+	helpers.RenderHTML(c, http.StatusOK, "users/index", gin.H{
 		"users":       users,
 		"currentUser": currentUser,
 	})
@@ -39,7 +40,7 @@ func UserShow(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "users/show", gin.H{
+	helpers.RenderHTML(c, http.StatusOK, "users/show", gin.H{
 		"user": user,
 	})
 }
@@ -50,14 +51,14 @@ func UserEdit(c *gin.Context) {
 	id, _ := strconv.Atoi(idStr)
 	user, err := models.GetUserByID(id)
 	if err != nil {
-		c.HTML(http.StatusNotFound, "user/edit", gin.H{
+		helpers.RenderHTML(c, http.StatusNotFound, "user/edit", gin.H{
 			"error": "ユーザーが見つかりません",
 			"user":  user,
 		})
 		return
 	}
 
-	c.HTML(http.StatusOK, "users/edit", gin.H{
+	helpers.RenderHTML(c, http.StatusOK, "users/edit", gin.H{
 		"user": user,
 	})
 }
@@ -76,7 +77,7 @@ func UserUpdate(c *gin.Context) {
 
 	err := models.UpdateUser(user)
 	if err != nil {
-		c.HTML(http.StatusBadRequest, "user/edit", gin.H{
+		helpers.RenderHTML(c, http.StatusBadRequest, "user/edit", gin.H{
 			"error": "入力情報が正しくありません",
 			"user":  user,
 		})

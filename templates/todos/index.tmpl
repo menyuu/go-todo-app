@@ -1,6 +1,6 @@
 {{ define "content" }}
   <h1>Todo一覧</h1>
-  <a href="/new">新規登録</a>
+  <a href="/todos/new">新規登録</a>
   <ul id="todo-list">
     {{ range .todos }}
       <li><a href="/{{ .ID }}">{{ .Title }}</a> - {{ if .Done }}✅{{ else }}❌{{ end }}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-todo-app/helpers"
 	"go-todo-app/models"
 	"net/http"
 	"strconv"
@@ -16,7 +17,7 @@ func TodoIndex(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "todos/index", gin.H{
+	helpers.RenderHTML(c, http.StatusOK, "todos/index", gin.H{
 		"todos": todos,
 	})
 }
@@ -35,14 +36,14 @@ func TodoShow(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "todos/show", gin.H{
+	helpers.RenderHTML(c, http.StatusOK, "todos/show", gin.H{
 		"todo": todo,
 	})
 }
 
 // GET 作成
 func TodoNew(c *gin.Context) {
-	c.HTML(http.StatusOK, "todos/new", nil)
+	helpers.RenderHTML(c, http.StatusOK, "todos/new", nil)
 }
 
 // GET 変更
@@ -60,14 +61,14 @@ func TodoEdit(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "todos/edit", gin.H{"todo": todo})
+	helpers.RenderHTML(c, http.StatusOK, "todos/edit", gin.H{"todo": todo})
 }
 
 // POST 作成
 func TodoCreate(c *gin.Context) {
 	title := c.PostForm("title")
 	if title == "" {
-		c.HTML(http.StatusBadRequest, "new", gin.H{
+		helpers.RenderHTML(c, http.StatusBadRequest, "new", gin.H{
 			"title": title,
 			"error": "タイトルは必須です",
 		})
@@ -75,7 +76,7 @@ func TodoCreate(c *gin.Context) {
 	}
 
 	if len([]rune(title)) > 50 {
-		c.HTML(http.StatusBadRequest, "todos/new", gin.H{
+		helpers.RenderHTML(c, http.StatusBadRequest, "todos/new", gin.H{
 			"title": title,
 			"error": "タイトルは50文字以内で入力してください",
 		})
@@ -109,7 +110,7 @@ func TodoUpdate(c *gin.Context) {
 		todo.Title = title
 		todo.Done = done
 
-		c.HTML(http.StatusOK, "todos/edit", gin.H{
+		helpers.RenderHTML(c, http.StatusOK, "todos/edit", gin.H{
 			"todo":  todo,
 			"error": "タイトルは必須です",
 		})
@@ -120,7 +121,7 @@ func TodoUpdate(c *gin.Context) {
 		todo.Title = title
 		todo.Done = done
 
-		c.HTML(http.StatusOK, "todos/edit", gin.H{
+		helpers.RenderHTML(c, http.StatusOK, "todos/edit", gin.H{
 			"todo":  todo,
 			"error": "タイトルは50文字以内で入力してください",
 		})

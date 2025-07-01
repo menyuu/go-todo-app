@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"go-todo-app/forms"
+	"go-todo-app/helpers"
 	"go-todo-app/models"
 	"net/http"
 
@@ -10,14 +11,14 @@ import (
 )
 
 func ShowSignUp(c *gin.Context) {
-	c.HTML(http.StatusOK, "sessions/new", nil)
+	helpers.RenderHTML(c, http.StatusOK, "sessions/new", nil)
 }
 
 func SignUp(c *gin.Context) {
 	var form forms.SignUpForm
 
 	if err := c.ShouldBind(&form); err != nil {
-		c.HTML(http.StatusBadRequest, "sessions/new", gin.H{
+		helpers.RenderHTML(c, http.StatusBadRequest, "sessions/new", gin.H{
 			"error": "入力を確認してください",
 		})
 		return
@@ -25,7 +26,7 @@ func SignUp(c *gin.Context) {
 
 	errors := forms.ValidateStruct(form)
 	if len(errors) > 0 {
-		c.HTML(http.StatusBadRequest, "sessions/new", gin.H{
+		helpers.RenderHTML(c, http.StatusBadRequest, "sessions/new", gin.H{
 			"errors": errors,
 			"form":   form,
 		})
@@ -39,7 +40,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	if err := models.CreateUser(&user); err != nil {
-		c.HTML(http.StatusInternalServerError, "sessions/new", gin.H{
+		helpers.RenderHTML(c, http.StatusInternalServerError, "sessions/new", gin.H{
 			"error": "登録に失敗しました",
 			"form":  form,
 		})
@@ -54,7 +55,7 @@ func SignUp(c *gin.Context) {
 }
 
 func ShowLogin(c *gin.Context) {
-	c.HTML(http.StatusOK, "sessions/login", nil)
+	helpers.RenderHTML(c, http.StatusOK, "sessions/login", nil)
 }
 
 func Login(c *gin.Context) {
@@ -63,7 +64,7 @@ func Login(c *gin.Context) {
 
 	user, err := models.AuthenticateUser(email, password)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "users/login", gin.H{
+		helpers.RenderHTML(c, http.StatusUnauthorized, "users/login", gin.H{
 			"error": "ユーザー認証に失敗しました",
 		})
 		return
