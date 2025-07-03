@@ -3,7 +3,7 @@
   <a href="/todos/new">新規登録</a>
   <ul id="todo-list">
     {{ range .todos }}
-      <li><a href="/{{ .ID }}">{{ .Title }}</a> - {{ if .Done }}✅{{ else }}❌{{ end }}
+      <li><a href="/todos/{{ .ID }}">{{ .Title }}</a> - {{ if .Done }}✅{{ else }}❌{{ end }}
       <a href="/todos/edit/{{ .ID }}">編集</a></li>
       <form action="/todos/delete/{{ .ID }}" method="POST" stype="display:inline">
         <button type="submit">削除</button>

@@ -59,8 +59,26 @@ func ShowLogin(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+	var form forms.LoginForm
+
+	if err := c.ShouldBind(&form); err != nil {
+		helpers.RenderHTML(c, http.StatusBadRequest, "sessions/login", gin.H{
+			"error": "入力を確認してください",
+		})
+		return
+	}
+
+	errors := forms.ValidateStruct(form)
+	if len(errors) > 0 {
+		helpers.RenderHTML(c, http.StatusBadRequest, "sessions/login", gin.H{
+			"errors": errors,
+			"form":   form,
+		})
+		return
+	}
+
+	email := form.Email
+	password := form.Password
 
 	user, err := models.AuthenticateUser(email, password)
 	if err != nil {

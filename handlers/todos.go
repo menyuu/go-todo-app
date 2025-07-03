@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"go-todo-app/forms"
 	"go-todo-app/helpers"
 	"go-todo-app/models"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -66,26 +68,40 @@ func TodoEdit(c *gin.Context) {
 
 // POST 作成
 func TodoCreate(c *gin.Context) {
-	title := c.PostForm("title")
-	if title == "" {
-		helpers.RenderHTML(c, http.StatusBadRequest, "new", gin.H{
-			"title": title,
-			"error": "タイトルは必須です",
-		})
-		return
-	}
-
-	if len([]rune(title)) > 50 {
+	var form forms.TodoForm
+	if err := c.ShouldBind(&form); err != nil {
 		helpers.RenderHTML(c, http.StatusBadRequest, "todos/new", gin.H{
-			"title": title,
-			"error": "タイトルは50文字以内で入力してください",
+			"error": "入力エラーがあります",
 		})
 		return
 	}
 
-	err := models.CreateTodo(title)
-	if err != nil {
-		c.String(http.StatusInternalServerError, "ToDoの作成に失敗しました")
+	errors := forms.ValidateStruct(form)
+	if len(errors) > 0 {
+		helpers.RenderHTML(c, http.StatusBadRequest, "todos/new", gin.H{
+			"error": errors,
+			"form":  form,
+		})
+	}
+
+	session := sessions.Default(c)
+	userID, ok := session.Get("user_id").(uint)
+	if !ok {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	todo := models.Todo{
+		Title:  form.Title,
+		Done:   false,
+		UserID: userID,
+	}
+
+	if err := models.CreateTodo(&todo); err != nil {
+		helpers.RenderHTML(c, http.StatusInternalServerError, "todos/new", gin.H{
+			"error": "保存に失敗しました",
+			"form":  form,
+		})
 		return
 	}
 
@@ -95,42 +111,56 @@ func TodoCreate(c *gin.Context) {
 // POST 変更
 func TodoUpdate(c *gin.Context) {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.String(http.StatusBadRequest, "IDが不正です")
-		return
-	}
 
-	title := c.PostForm("title")
-	done := c.PostForm("done") == "on"
-
-	todo, _ := models.GetTodoByID(id)
-
-	if title == "" {
-		todo.Title = title
-		todo.Done = done
-
-		helpers.RenderHTML(c, http.StatusOK, "todos/edit", gin.H{
-			"todo":  todo,
-			"error": "タイトルは必須です",
+	var form forms.TodoForm
+	if err := c.ShouldBind(&form); err != nil {
+		helpers.RenderHTML(c, http.StatusBadRequest, "todos/edit", gin.H{
+			"error": "入力エラーがあります",
 		})
 		return
 	}
 
-	if len([]rune(title)) > 50 {
-		todo.Title = title
-		todo.Done = done
+	id, _ := strconv.Atoi(idStr)
 
-		helpers.RenderHTML(c, http.StatusOK, "todos/edit", gin.H{
-			"todo":  todo,
-			"error": "タイトルは50文字以内で入力してください",
+	errors := forms.ValidateStruct(form)
+	if len(errors) > 0 {
+		helpers.RenderHTML(c, http.StatusBadRequest, "todos/edit", gin.H{
+			"error": errors,
+			"form":  form,
+			"id":    id,
 		})
 		return
 	}
 
-	err = models.UpdateTodo(id, title, done)
+	session := sessions.Default(c)
+	userID, ok := session.Get("user_id").(uint)
+	if !ok {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	todo, err := models.GetTodoByID(id)
 	if err != nil {
-		c.String(http.StatusInternalServerError, "ToDoの更新に失敗しました")
+		helpers.RenderHTML(c, http.StatusNotFound, "todos/edit", gin.H{
+			"error": "Todoが見つかりません",
+			"form":  form,
+			"id":    id,
+		})
+		return
+	} else if todo.UserID != userID {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	todo.Title = form.Title
+	todo.Done = form.Done
+
+	if err := models.UpdateTodo(todo); err != nil {
+		helpers.RenderHTML(c, http.StatusInternalServerError, "todos/edit", gin.H{
+			"error": "更新に失敗しました",
+			"form":  form,
+			"id":    id,
+		})
 		return
 	}
 

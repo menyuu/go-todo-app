@@ -4,9 +4,10 @@ import "gorm.io/gorm"
 
 type Todo struct {
 	gorm.Model
-	Title  string `form:"title" binding:"required,max=50"`
+	Title  string
 	Done   bool
 	UserID uint
+	User   User `gorm:"constraint:OnDelete:CASCADE;"`
 }
 
 // 全件取得
@@ -28,20 +29,16 @@ func GetTodoByID(id int) (*Todo, error) {
 }
 
 // 作成
-func CreateTodo(title string) error {
-	todo := Todo{Title: title, Done: false}
+func CreateTodo(todo *Todo) error {
 	return DB.Create(&todo).Error
 }
 
 // 変更
-func UpdateTodo(id int, title string, done bool) error {
-	var todo Todo
-	if err := DB.First(&todo, id).Error; err != nil {
+func UpdateTodo(todo *Todo) error {
+	if err := DB.First(&todo).Error; err != nil {
 		return err
 	}
 
-	todo.Title = title
-	todo.Done = done
 	return DB.Save(&todo).Error
 }
 

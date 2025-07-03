@@ -1,6 +1,7 @@
 {{ define "content" }}
   <h2>ログイン</h2>
   <form method="POST" action="/login">
+    {{ template "errors" . }}
     <div>
       <label for="email">メールアドレス：</label>
       <input id="email" type="email" name="email">
@@ -13,5 +14,4 @@
       <button type="submit">ログイン</div>
     </div>
   </form>
-  {{ if .error }}<p style="color:red;">{{ .error }}</p>{{ end }}
 {{ end }}

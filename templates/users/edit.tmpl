@@ -1,6 +1,7 @@
 {{ define "content" }}
   <h1>編集</h1>
   <form action="/users/update/{{ .user.ID }}" method="POST">
+    {{ template "errors" . }}
     <div>
       <label for="name">名前：</label>
       <input id="name" type="text" name="name" value="{{ .user.Name }}">
